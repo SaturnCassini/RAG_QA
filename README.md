@@ -16,3 +16,27 @@ UI
 `nvm install 18`
 `nvm use`
 `npm run dev`
+
+Docker Setup:+
+
+1. Install Docker
+2. Install Docker Compose
+3. Run Ollama
+  - cd ollama-docker
+  - docker-compose up -d 
+  - docker-compose -f docker-compose-ollama-gpu.yaml up -d  // if you have a nvidia GPU configured
+
+  - locahost:8000 to see whats running
+  - localhost:11434 ollama service
+  - localhost:3000 to see the UI
+to download the model 
+  docker ps shows all docker instances running
+   enter the ollama container with:  docker exec -it ollama bash
+    ollama pull mistral ADD THIS TO THE DOCKER FILE
+    ollama run mistral
+
+TODO: 
+  Pull Mistrall automatically at build of the container
+
+
+
