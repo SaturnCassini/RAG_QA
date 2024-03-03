@@ -29,9 +29,9 @@ class SimpleRetrievalSystem(RetrievalSystemInterface):
         # Simplified example implementation
         return [Document(title="Doc1", content="Content1"), Document(title="Doc2", content="Content2")]
 
-class ComplexRetrievalSystem(RetrievalSystemInterface):
+class ScraperRetrievalSystem(RetrievalSystemInterface):
     def retrieve_documents(self, query: Query) -> List[Document]:
-        # Placeholder for a more complex retrieval technique like web scraping or SQL database querying
+        # Placeholder for a more complex retrieval technique like web scraping
         return [Document(title="Doc3", content="Content3"), Document(title="Doc4", content="Content4")]
 
 class DocsQueryRequest(BaseModel):
@@ -73,17 +73,19 @@ class RetrievalAugmentedGeneration:
     async def ask(self, query_text: str, n: int = 15) -> Dict[str, str]:
         async with httpx.AsyncClient() as client:
             response = await client.post(
-                "http://localhost:11434/api/generate", # Ollama server address
-                json={"model": "mistral", "prompt": query_text, "stream": False}
+                "http://localhost:11434/v1/completions",  # Aphrodite server address
+                json={"model": "mistral", "prompt": query_text, "stream": False, "max_tokens": n}
             )
+            
             if response.status_code == 200:
                 try:
-                    responses = [json.loads(line) for line in response.text.strip().split('\n') if line]
-                    combined_response = " ".join(resp['response'] for resp in responses)
-                    return {"response": combined_response}
+                    response_data = response.json()  # Parse the JSON response
+                    # Extract the text from the first choice
+                    response_text = response_data["choices"][0]["text"]
+                    return {"response": response_text}
                 except ValueError as e:
                     print(f"JSON parsing error: {e}. Response text: '{response.text}'")
                     raise HTTPException(status_code=500, detail="Invalid JSON response from external API.")
             else:
                 print(f"Failed external API call. Status: {response.status_code}, Body: {response.text}")
-                raise HTTPException(status_code=response.status_code, detail="Failed to generate response from external API.")
+                raise HTTPException(status_code=response.status_code, detail="External API call failed.")

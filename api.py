@@ -57,5 +57,12 @@ async def ask_endpoint(ask_request: AskRequest, request: Request):
     except HTTPException as e:
         return JSONResponse(status_code=e.status_code, content={"message": e.detail})
 
+@app.post("/scrape")
+@limiter.limit("20/hour")
+async def scrape_website(url: str):
+    scraped_text = 
+
+    return scraped_text
+
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
