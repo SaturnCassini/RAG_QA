@@ -1,3 +1,1 @@
-FROM ollama/ollama:latest
-
-CMD ["ollama run mistral"]
+FROM synthian/ollama_mistral:latest

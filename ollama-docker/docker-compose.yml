@@ -8,16 +8,15 @@ services:
     volumes:
       - .:/code
     command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+    # run another command after
     restart: always
     depends_on:
       - ollama
       - llama-webui
     networks:
       - ollama-docker
-
   ollama:
     build: ./ollamaDocker
-    #image: ollama/ollama:latest
     ports:
       - 11434:11434
     volumes:
