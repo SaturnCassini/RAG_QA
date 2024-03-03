@@ -16,7 +16,7 @@ services:
       - ollama-docker
 
   ollama:
-    build: ./ollama
+    build: ./ollamaDocker
     #image: ollama/ollama:latest
     ports:
       - 11434:11434
