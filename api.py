@@ -17,7 +17,7 @@ app = FastAPI()
 # Define a list of allowed origins for CORS
 # Use ["*"] to allow all origins
 allowed_origins = [
-    "http://localhost:3000",  # Adjust this to the domain(s) you want to allow
+    "http://localhost:3001",  # Adjust this to the domain(s) you want to allow
     "https://example.com",
 ]
 
@@ -56,6 +56,13 @@ async def ask_endpoint(ask_request: AskRequest, request: Request):
         return JSONResponse(status_code=501, content={"message": str(e)})
     except HTTPException as e:
         return JSONResponse(status_code=e.status_code, content={"message": e.detail})
+
+@app.post("/scrape")
+@limiter.limit("20/hour")
+async def scrape_website(url: str, request: Request):
+    scraped_text = "The content of the website goes here"
+
+    return scraped_text
 
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
