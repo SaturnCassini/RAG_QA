@@ -70,18 +70,32 @@ class RetrievalAugmentedGeneration:
         documents = await self.vector_store.retrieve_documents(query_text, user_metadata)
         return documents
 
-    async def ask(self, query_text: str, n: int = 15) -> Dict[str, str]:
+    async def ask(self, query_text: str, n: int = 500) -> Dict[str, str]:
         async with httpx.AsyncClient() as client:
+            # Ensure correct model name and other parameters are included in the JSON payload
+            data = {
+                "model": "mistral",  # Adjusted model name as per your example
+                "messages":[
+                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": "Hello!"}
+                ],
+                "stream": False,
+                "max_tokens": n
+            }
+            headers = {"Content-Type": "application/json"}
+
+            # Making the POST request
             response = await client.post(
-                "http://localhost:11434/v1/completions",  # Aphrodite server address
-                json={"model": "mistral", "prompt": query_text, "stream": False, "max_tokens": n}
+                "http://localhost:11434/v1/chat/completions",  # Aphrodite server address
+                json=data,  # `json=` automatically sets Content-Type to application/json
+                headers=headers  # This line is technically redundant here as `json=` does the job
             )
             
             if response.status_code == 200:
                 try:
                     response_data = response.json()  # Parse the JSON response
                     # Extract the text from the first choice
-                    response_text = response_data["choices"][0]["text"]
+                    response_text = response_data["choices"][0]["message"]["content"]
                     return {"response": response_text}
                 except ValueError as e:
                     print(f"JSON parsing error: {e}. Response text: '{response.text}'")
