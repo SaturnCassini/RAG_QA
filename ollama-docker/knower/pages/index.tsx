@@ -2,6 +2,11 @@
 
 import React, { useState, FormEvent } from 'react';
 
+// EXAMPLE USING OLLAMA API
+// curl ollama:11434/api/generate -d '{
+//   "model": "mistral",
+//   "prompt": "Why is the sky blue?"
+// }'
 
 interface ChatMessage {
   question: string;
@@ -15,7 +20,7 @@ const HomePage: React.FC = () => {
   const sendMessage = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:1337/ask', {
+      const response = await fetch('ollama:11434/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question: message }),
