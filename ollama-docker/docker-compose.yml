@@ -1,5 +1,14 @@
 version: '3.8'
 services:
+  knower:
+    build: ./knower
+    container_name: knower
+    ports:
+      - 5000:5000
+    volumes:
+      - .:/code/knower
+    networks:
+      - ollama-docker
   app:
     build: .
     ports:
