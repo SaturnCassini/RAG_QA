@@ -20,10 +20,10 @@ const HomePage: React.FC = () => {
   const sendMessage = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('ollama:11434/api/generate', {
+      const response = await fetch('http://localhost:11434/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: message }),
+        body: JSON.stringify({ question: message, model: 'mistral', stream: false }),
       });
 
       if (!response.ok) {
@@ -31,6 +31,7 @@ const HomePage: React.FC = () => {
       }
 
       const data = await response.json();
+      console.log('Response:', data);
       setChatHistory([...chatHistory, { question: message, answer: data.response }]);
       setMessage('');
     } catch (error) {
@@ -59,7 +60,7 @@ const HomePage: React.FC = () => {
             style={{ flexGrow: 1 }}
             onChange={(e) => setMessage(e.target.value)}
           />
-          <button type="submit">Send</button>
+          <button type="submit">Senin</button>
         </form>
       </div>
     </div>
