@@ -6,7 +6,8 @@ services:
     ports:
       - 5000:5000
     volumes:
-      - .:/code/knower
+      - ./knower:/usr/app
+    command: npm run dev
     networks:
       - ollama-docker
   app:
